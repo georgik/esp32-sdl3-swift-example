@@ -1,4 +1,11 @@
 
+struct Pumpkin {
+    var destRect: SDL_FRect     // Position and size
+    var xSpeed: Float           // Speed in X direction
+    var ySpeed: Float           // Speed in Y direction
+    var isActive: Bool          // Whether the pumpkin is active (visible)
+}
+
 @_cdecl("app_main")
 func app_main() {
     print("Initializing SDL3 from Swift.")
@@ -21,8 +28,18 @@ func app_main() {
     pthread_detach(sdl_pthread)
 }
 
+func pointInRect(x: Float, y: Float, rect: SDL_FRect) -> Bool {
+    return x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h
+}
+
 func sdl_thread_entry_point(arg: UnsafeMutableRawPointer?) -> UnsafeMutableRawPointer? {
     print("SDL thread started.")
+    let numberOfPumpkins = 25
+    var pumpkins: [Pumpkin] = []
+
+    // Screen boundaries
+    let screenWidth = Float(BSP_LCD_H_RES)
+    let screenHeight = Float(BSP_LCD_V_RES)
 
     // Initialize SDL
     if SDL_Init(UInt32(SDL_INIT_VIDEO | SDL_INIT_EVENTS)) == false {
@@ -56,6 +73,15 @@ func sdl_thread_entry_point(arg: UnsafeMutableRawPointer?) -> UnsafeMutableRawPo
     let imageTexture = SDL_CreateTextureFromSurface(renderer, imageSurface);
     SDL_DestroySurface(imageSurface);
 
+    // let bmpFilePath: StaticString = "assets/espressif.bmp"
+    let dangerSurface = SDL_LoadBMP(getDangerFilePath())
+    if (dangerSurface == nil) {
+        print("Failed to load image")
+    }
+
+    let dangerTexture = SDL_CreateTextureFromSurface(renderer, dangerSurface);
+    SDL_DestroySurface(dangerSurface);
+
     var destRect = SDL_FRect()
 
     // Assign values to the fields
@@ -67,56 +93,90 @@ func sdl_thread_entry_point(arg: UnsafeMutableRawPointer?) -> UnsafeMutableRawPo
     SDL_RenderTexture(renderer, imageTexture, nil, &destRect);
     SDL_RenderPresent(renderer)
 
-    var event = SDL_Event()
-    var running = true
     var xSpeed: Float = 2.0
     var ySpeed: Float = 2.0
 
+    // Initialize pumpkins
+    for _ in 0..<numberOfPumpkins {
+        var destRect = SDL_FRect()
+        destRect.w = 32.0
+        destRect.h = 32.0
+        destRect.x = Float.random(in: 0...(screenWidth - destRect.w))
+        destRect.y = Float.random(in: 0...(screenHeight - destRect.h))
+
+        let xSpeed = Float.random(in: -15.0...15.0)
+        let ySpeed = Float.random(in: -15.0...15.0)
+
+        let pumpkin = Pumpkin(destRect: destRect, xSpeed: xSpeed, ySpeed: ySpeed, isActive: true)
+        pumpkins.append(pumpkin)
+    }
+    var score = 0
+    var event = SDL_Event()
+    var running = true
+
     while running {
-        // Handle events (e.g., window close)
+        // Handle events
         while SDL_PollEvent(&event) {
             if event.type == SDL_EVENT_QUIT.rawValue {
                 running = false
                 break
+            } else if event.type == SDL_EVENT_FINGER_UP.rawValue {
+                // Get touch coordinates (normalized between 0 and 1)
+                let touchX = event.tfinger.x * screenWidth
+                let touchY = event.tfinger.y * screenHeight
+                
+                // Check if touch intersects any pumpkin
+                for i in 0..<pumpkins.count {
+                    if pumpkins[i].isActive && pointInRect(x: touchX, y: touchY, rect: pumpkins[i].destRect) {
+                        // Pumpkin was tapped
+                        pumpkins[i].isActive = false // Make it disappear
+                        score += 1 // Increase score
+                        
+                        // Reposition the pumpkin
+                        pumpkins[i].destRect.x = Float.random(in: 0...(screenWidth - pumpkins[i].destRect.w))
+                        pumpkins[i].destRect.y = Float.random(in: 0...(screenHeight - pumpkins[i].destRect.h))
+                        pumpkins[i].xSpeed = Float.random(in: -15.0...15.0)
+                        pumpkins[i].ySpeed = Float.random(in: -15.0...15.0)
+                        pumpkins[i].isActive = true // Reactivate
+                        break // Assume only one pumpkin can be tapped at a time
+                    }
+                }
             }
-            // Handle other events if needed
         }
 
-        // Update the position of the image
-        destRect.x += xSpeed
-        destRect.y += ySpeed
+        // Update pumpkin positions and check for collisions
+        for i in 0..<pumpkins.count {
+            if pumpkins[i].isActive {
+                pumpkins[i].destRect.x += pumpkins[i].xSpeed
+                pumpkins[i].destRect.y += pumpkins[i].ySpeed
 
-        // Check for collision with the left and right edges
-        if destRect.x <= 0 {
-            destRect.x = 0
-            xSpeed = -xSpeed // Reverse X direction
-        } else if destRect.x + destRect.w >= Float(BSP_LCD_H_RES) {
-            destRect.x = Float(BSP_LCD_H_RES) - destRect.w
-            xSpeed = -xSpeed // Reverse X direction
+                // Check for collision with edges
+                if pumpkins[i].destRect.x <= 0 || pumpkins[i].destRect.x + pumpkins[i].destRect.w >= screenWidth {
+                    pumpkins[i].xSpeed = -pumpkins[i].xSpeed
+                }
+                if pumpkins[i].destRect.y <= 0 || pumpkins[i].destRect.y + pumpkins[i].destRect.h >= screenHeight {
+                    pumpkins[i].ySpeed = -pumpkins[i].ySpeed
+                }
+            }
         }
 
-        // Check for collision with the top and bottom edges
-        if destRect.y <= 0 {
-            destRect.y = 0
-            ySpeed = -ySpeed // Reverse Y direction
-        } else if destRect.y + destRect.h >= Float(BSP_LCD_V_RES) {
-            destRect.y = Float(BSP_LCD_V_RES) - destRect.h
-            ySpeed = -ySpeed // Reverse Y direction
-        }
-
-        // Clear the renderer with a black color
+        // Clear the renderer
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255)
         SDL_RenderClear(renderer)
 
-        // Render the image at the new position
-        SDL_RenderTexture(renderer, imageTexture, nil, &destRect)
+        // Render active pumpkins
+        for pumpkin in pumpkins {
+            if pumpkin.isActive {
+                var rect = pumpkin.destRect
+                SDL_RenderTexture(renderer, imageTexture, nil, &rect)
+            }
+        }
 
         // Present the updated frame
         SDL_RenderPresent(renderer)
 
-        // Delay to limit the frame rate (~60 FPS)
+        // Delay to limit frame rate (~60 FPS)
         SDL_Delay(16)
     }
-
     return nil
 }

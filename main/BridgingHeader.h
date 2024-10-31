@@ -10,3 +10,4 @@
 #include "filesystem.h"
 
 const char* getBmpFilePath(void);
+const char* getDangerFilePath(void);
