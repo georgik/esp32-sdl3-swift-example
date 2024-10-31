@@ -1,10 +1,19 @@
 
-struct Pumpkin {
+// Define sprite types
+enum SpriteType {
+    case pumpkin
+    case danger
+}
+
+// Generalized Sprite struct
+struct Sprite {
     var destRect: SDL_FRect     // Position and size
     var xSpeed: Float           // Speed in X direction
     var ySpeed: Float           // Speed in Y direction
-    var isActive: Bool          // Whether the pumpkin is active (visible)
+    var isActive: Bool          // Whether the sprite is active (visible)
+    var type: SpriteType        // Type of the sprite (pumpkin or danger)
 }
+
 
 @_cdecl("app_main")
 func app_main() {
@@ -32,10 +41,23 @@ func pointInRect(x: Float, y: Float, rect: SDL_FRect) -> Bool {
     return x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h
 }
 
+// Helper function to get random float (since Float.random(in:) may not be available)
+func getRandomFloat_C(_ min: Float, _ max: Float) -> Float {
+    return getRandomFloat(min, max)
+}
+
+// Random number generation helper (since Float.random(in:) may not be available)
+func getRandomFloat(min: Float, max: Float) -> Float {
+    return getRandomFloat_C(min, max)
+}
+
 func sdl_thread_entry_point(arg: UnsafeMutableRawPointer?) -> UnsafeMutableRawPointer? {
     print("SDL thread started.")
+
+    // Initialize sprites
     let numberOfPumpkins = 25
-    var pumpkins: [Pumpkin] = []
+    let numberOfDangers = 10
+    var sprites: [Sprite] = []
 
     // Screen boundaries
     let screenWidth = Float(BSP_LCD_H_RES)
@@ -70,7 +92,7 @@ func sdl_thread_entry_point(arg: UnsafeMutableRawPointer?) -> UnsafeMutableRawPo
         print("Failed to load image")
     }
 
-    let imageTexture = SDL_CreateTextureFromSurface(renderer, imageSurface);
+    let pumpkinTexture = SDL_CreateTextureFromSurface(renderer, imageSurface);
     SDL_DestroySurface(imageSurface);
 
     // let bmpFilePath: StaticString = "assets/espressif.bmp"
@@ -90,7 +112,7 @@ func sdl_thread_entry_point(arg: UnsafeMutableRawPointer?) -> UnsafeMutableRawPo
     destRect.w = 32
     destRect.h = 32
 
-    SDL_RenderTexture(renderer, imageTexture, nil, &destRect);
+    SDL_RenderTexture(renderer, pumpkinTexture, nil, &destRect);
     SDL_RenderPresent(renderer)
 
     var xSpeed: Float = 2.0
@@ -101,20 +123,36 @@ func sdl_thread_entry_point(arg: UnsafeMutableRawPointer?) -> UnsafeMutableRawPo
         var destRect = SDL_FRect()
         destRect.w = 32.0
         destRect.h = 32.0
-        destRect.x = Float.random(in: 0...(screenWidth - destRect.w))
-        destRect.y = Float.random(in: 0...(screenHeight - destRect.h))
+        destRect.x = getRandomFloat(min: 0, max: screenWidth - destRect.w)
+        destRect.y = getRandomFloat(min: 0, max: screenHeight - destRect.h)
 
-        let xSpeed = Float.random(in: -15.0...15.0)
-        let ySpeed = Float.random(in: -15.0...15.0)
+        let xSpeed = getRandomFloat(min: -15.0, max: 15.0)
+        let ySpeed = getRandomFloat(min: -15.0, max: 15.0)
 
-        let pumpkin = Pumpkin(destRect: destRect, xSpeed: xSpeed, ySpeed: ySpeed, isActive: true)
-        pumpkins.append(pumpkin)
+        let sprite = Sprite(destRect: destRect, xSpeed: xSpeed, ySpeed: ySpeed, isActive: true, type: .pumpkin)
+        sprites.append(sprite)
     }
+
+    // Initialize dangers
+    for _ in 0..<numberOfDangers {
+        var destRect = SDL_FRect()
+        destRect.w = 32.0
+        destRect.h = 32.0
+        destRect.x = getRandomFloat(min: 0, max: screenWidth - destRect.w)
+        destRect.y = getRandomFloat(min: 0, max: screenHeight - destRect.h)
+
+        let xSpeed = getRandomFloat(min: -15.0, max: 15.0)
+        let ySpeed = getRandomFloat(min: -15.0, max: 15.0)
+
+        let sprite = Sprite(destRect: destRect, xSpeed: xSpeed, ySpeed: ySpeed, isActive: true, type: .danger)
+        sprites.append(sprite)
+    }
+
     var score = 0
     var event = SDL_Event()
     var running = true
 
-    while running {
+      while running {
         // Handle events
         while SDL_PollEvent(&event) {
             if event.type == SDL_EVENT_QUIT.rawValue {
@@ -124,38 +162,44 @@ func sdl_thread_entry_point(arg: UnsafeMutableRawPointer?) -> UnsafeMutableRawPo
                 // Get touch coordinates (normalized between 0 and 1)
                 let touchX = event.tfinger.x * screenWidth
                 let touchY = event.tfinger.y * screenHeight
-                
-                // Check if touch intersects any pumpkin
-                for i in 0..<pumpkins.count {
-                    if pumpkins[i].isActive && pointInRect(x: touchX, y: touchY, rect: pumpkins[i].destRect) {
-                        // Pumpkin was tapped
-                        pumpkins[i].isActive = false // Make it disappear
-                        score += 1 // Increase score
-                        
-                        // Reposition the pumpkin
-                        pumpkins[i].destRect.x = Float.random(in: 0...(screenWidth - pumpkins[i].destRect.w))
-                        pumpkins[i].destRect.y = Float.random(in: 0...(screenHeight - pumpkins[i].destRect.h))
-                        pumpkins[i].xSpeed = Float.random(in: -15.0...15.0)
-                        pumpkins[i].ySpeed = Float.random(in: -15.0...15.0)
-                        pumpkins[i].isActive = true // Reactivate
-                        break // Assume only one pumpkin can be tapped at a time
+
+                // Check if touch intersects any sprite
+                for i in 0..<sprites.count {
+                    if sprites[i].isActive && pointInRect(x: touchX, y: touchY, rect: sprites[i].destRect) {
+                        if sprites[i].type == .pumpkin {
+                            // Pumpkin was tapped
+                            sprites[i].isActive = false // Make it disappear
+                            score += 1 // Increase score
+                        } else if sprites[i].type == .danger {
+                            // Danger was tapped
+                            score = 0 // Reset score
+                        }
+
+                        // Reposition the sprite
+                        sprites[i].destRect.x = getRandomFloat(min: 0, max: screenWidth - sprites[i].destRect.w)
+                        sprites[i].destRect.y = getRandomFloat(min: 0, max: screenHeight - sprites[i].destRect.h)
+                        sprites[i].xSpeed = getRandomFloat(min: -15.0, max: 15.0)
+                        sprites[i].ySpeed = getRandomFloat(min: -15.0, max: 15.0)
+                        sprites[i].isActive = true // Reactivate
+
+                        break // Assume only one sprite can be tapped at a time
                     }
                 }
             }
         }
 
-        // Update pumpkin positions and check for collisions
-        for i in 0..<pumpkins.count {
-            if pumpkins[i].isActive {
-                pumpkins[i].destRect.x += pumpkins[i].xSpeed
-                pumpkins[i].destRect.y += pumpkins[i].ySpeed
+        // Update sprite positions and check for collisions
+        for i in 0..<sprites.count {
+            if sprites[i].isActive {
+                sprites[i].destRect.x += sprites[i].xSpeed
+                sprites[i].destRect.y += sprites[i].ySpeed
 
                 // Check for collision with edges
-                if pumpkins[i].destRect.x <= 0 || pumpkins[i].destRect.x + pumpkins[i].destRect.w >= screenWidth {
-                    pumpkins[i].xSpeed = -pumpkins[i].xSpeed
+                if sprites[i].destRect.x <= 0 || sprites[i].destRect.x + sprites[i].destRect.w >= screenWidth {
+                    sprites[i].xSpeed = -sprites[i].xSpeed
                 }
-                if pumpkins[i].destRect.y <= 0 || pumpkins[i].destRect.y + pumpkins[i].destRect.h >= screenHeight {
-                    pumpkins[i].ySpeed = -pumpkins[i].ySpeed
+                if sprites[i].destRect.y <= 0 || sprites[i].destRect.y + sprites[i].destRect.h >= screenHeight {
+                    sprites[i].ySpeed = -sprites[i].ySpeed
                 }
             }
         }
@@ -164,19 +208,23 @@ func sdl_thread_entry_point(arg: UnsafeMutableRawPointer?) -> UnsafeMutableRawPo
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255)
         SDL_RenderClear(renderer)
 
-        // Render active pumpkins
-        for pumpkin in pumpkins {
-            if pumpkin.isActive {
-                var rect = pumpkin.destRect
-                SDL_RenderTexture(renderer, imageTexture, nil, &rect)
+        // Render active sprites
+        for sprite in sprites {
+            if sprite.isActive {
+                var rect = sprite.destRect
+                if sprite.type == .pumpkin {
+                    SDL_RenderTexture(renderer, pumpkinTexture, nil, &rect)
+                } else if sprite.type == .danger {
+                    SDL_RenderTexture(renderer, dangerTexture, nil, &rect)
+                }
             }
         }
-
         // Present the updated frame
         SDL_RenderPresent(renderer)
 
         // Delay to limit frame rate (~60 FPS)
         SDL_Delay(16)
+        // print("tick")
     }
     return nil
 }

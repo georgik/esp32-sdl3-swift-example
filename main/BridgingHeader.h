@@ -11,3 +11,4 @@
 
 const char* getBmpFilePath(void);
 const char* getDangerFilePath(void);
+float getRandomFloat(float min, float max);
