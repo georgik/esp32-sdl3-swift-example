@@ -63,6 +63,7 @@ jobs:
           target: ${{ env.TARGET }}
           path: '.'
           command: |
+            /usr/local/bin/swift --version
             idf.py @boards/${{ matrix.board }}.cfg build &&
             cd build.${{ matrix.board }} &&
             esptool.py --chip ${{ env.TARGET }} merge_bin -o ${{ github.event.inputs.prefix }}-${{ matrix.board }}.bin "@flash_args"
