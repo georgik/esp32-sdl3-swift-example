@@ -44,6 +44,11 @@ jobs:
             *) echo 'Unknown target'; exit 1;;
           esac)" >> $GITHUB_ENV
 
+      - name: Setup Swift
+        uses: SwiftyLab/setup-swift@latest
+        with:
+          development: true
+
       - name: esp-idf build and merge binaries
         uses: espressif/esp-idf-ci-action@v1.1.0
         with:

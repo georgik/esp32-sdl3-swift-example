@@ -143,7 +143,7 @@ func sdl_thread_entry_point(arg: UnsafeMutableRawPointer?) -> UnsafeMutableRawPo
         let xSpeed = getRandomFloat(min: -15.0, max: 15.0)
         let ySpeed = getRandomFloat(min: -15.0, max: 15.0)
 
-        let sprite = Sprite(destRect: destRect, xSpeed: xSpeed, ySpeed: ySpeed, isActive: true, type: .pumpkin)
+        let sprite = Sprite(destRect: destRect, xSpeed: xSpeed, ySpeed: ySpeed, isActive: true, type: .coin)
         sprites.append(sprite)
     }
 
