@@ -49,20 +49,8 @@ jobs:
             sudo apt-get update
             sudo apt-get install pkg-config
 
-    #   - name: Setup Swift
-    #     uses: SwiftyLab/setup-swift@latest
-    #     with:
-    #       development: true
-
-    #   - name: Install Swift
-    #     run: |
-    #         sudo mv /usr/local/bin/swift* /usr/bin/
-    #         sudo mv /usr/local/lib/swift /usr/lib/
-
       - name: esp-idf build and merge binaries
         uses: espressif/esp-idf-ci-action@v1.1.0
-        env:
-          SWIFTC: /usr/local/bin/swift
         with:
           esp_idf_version: latest
           target: ${{ env.TARGET }}
@@ -70,7 +58,6 @@ jobs:
           command: |
             wget https://download.swift.org/development/ubuntu2204/swift-DEVELOPMENT-SNAPSHOT-2024-10-30-a/swift-DEVELOPMENT-SNAPSHOT-2024-10-30-a-ubuntu22.04.tar.gz
             tar xzf swift-DEVELOPMENT-SNAPSHOT-2024-10-30-a-ubuntu22.04.tar.gz
-            export SWIFTC=`pwd`/swift-DEVELOPMENT-SNAPSHOT-2024-10-30-a-ubuntu22.04/usr/bin/swift
             export PATH="$PATH:`pwd`/swift-DEVELOPMENT-SNAPSHOT-2024-10-30-a-ubuntu22.04/usr/bin/"
             swiftc --version
             idf.py @boards/${{ matrix.board }}.cfg build &&
