@@ -1,6 +1,6 @@
 # ESP32 Swift Example
 
-![Test Status](https://github.com/georgik/esp32-sdl3-swift-test/actions/workflows/test.yml/badge.svg)
+![Test Status](https://github.com/georgik/esp32-sdl3-swift-example/actions/workflows/test.yml/badge.svg)
 
 Example of graphical application for ESP32-P4.
 
