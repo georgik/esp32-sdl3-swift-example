@@ -1,7 +1,6 @@
 # Register the app as an IDF component
 idf_component_register(
     SRCS
-        "assets.c"
         "filesystem.c"
     PRIV_INCLUDE_DIRS "."
     LDFRAGMENTS "linker.lf"
