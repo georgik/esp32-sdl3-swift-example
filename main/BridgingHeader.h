@@ -9,10 +9,3 @@
 #include "pthread.h"
 #include "bsp/esp-bsp.h"
 #include "filesystem.h"
-
-const char* getBmpFilePath(void);
-const char* getDangerFilePath(void);
-float getRandomFloat(float min, float max);
-void logFloat(double value);
-const char* getFontFilePath(void);
-void getScoreText(int score, char* buffer, int bufferSize);
