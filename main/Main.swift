@@ -166,7 +166,9 @@ func sdl_thread_entry_point(arg: UnsafeMutableRawPointer?) -> UnsafeMutableRawPo
     var event = SDL_Event()
     var running = true
 
-      while running {
+    print("Entering main loop...")
+
+    while running {
         // Handle events
         while SDL_PollEvent(&event) {
             if event.type == SDL_EVENT_QUIT.rawValue {
