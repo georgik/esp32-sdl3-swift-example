@@ -70,8 +70,8 @@ jobs:
           command: |
             wget https://download.swift.org/development/ubuntu2204/swift-DEVELOPMENT-SNAPSHOT-2024-10-30-a/swift-DEVELOPMENT-SNAPSHOT-2024-10-30-a-ubuntu22.04.tar.gz
             tar xzf swift-DEVELOPMENT-SNAPSHOT-2024-10-30-a-ubuntu22.04.tar.gz
-            export SWIFTC=`pwd`/swift-DEVELOPMENT-SNAPSHOT-2024-10-30-a-ubuntu20.04/usr/bin/swift
-            export PATH="$PATH:`pwd`/swift-DEVELOPMENT-SNAPSHOT-2024-10-30-a-ubuntu20.04/usr/bin/"
+            export SWIFTC=`pwd`/swift-DEVELOPMENT-SNAPSHOT-2024-10-30-a-ubuntu22.04/usr/bin/swift
+            export PATH="$PATH:`pwd`/swift-DEVELOPMENT-SNAPSHOT-2024-10-30-a-ubuntu22.04/usr/bin/"
             swiftc --version
             idf.py @boards/${{ matrix.board }}.cfg build &&
             cd build.${{ matrix.board }} &&
