@@ -1,0 +1,49 @@
+name: Test ESP32 Application
+
+on:
+  workflow_dispatch:
+    inputs:
+      prefix:
+        description: 'Prefix for binary name'
+        required: true
+        default: 'esp32-sdl3-swift-example'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        board: [esp32_p4_function_ev_board]
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download artifact
+        id: download-artifact
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          workflow: build.yml
+          name: ${{ github.event.inputs.prefix }}-${{ matrix.board }}.bin
+          path: build.${{ matrix.board }}
+
+      - name: Use Wokwi CI Server
+        uses: wokwi/wokwi-ci-server-action@v1
+
+      - name: Run tests using Wokwi CLI
+        uses: wokwi/wokwi-ci-action@v1
+        with:
+          token: ${{ secrets.WOKWI_CLI_TOKEN }}
+          path: boards/${{ matrix.board }}
+          elf: build.${{ matrix.board }}/${{ github.event.inputs.prefix }}-${{ matrix.board }}.bin
+          timeout: 20000
+          expect_text: 'Entering main loop...'
+          fail_text: 'Rebooting...'
+          serial_log_file: 'wokwi-logs-${{ matrix.board }}.txt'
+
+      - name: Upload Wokwi Logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: wokwi-logs-${{ matrix.board }}
+          path: wokwi-logs-${{ matrix.board }}.txt
