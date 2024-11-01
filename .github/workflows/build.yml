@@ -47,7 +47,7 @@ jobs:
       - name: Install pkg-config required by ESP-IDF - CMake - Swift integration
         run: |
             sudo apt-get update
-            sudo apt-get install pkgconfig
+            sudo apt-get install pkg-config
 
       - name: Setup Swift
         uses: SwiftyLab/setup-swift@latest
