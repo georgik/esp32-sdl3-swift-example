@@ -54,6 +54,11 @@ jobs:
         with:
           development: true
 
+      - name: Move Swift
+        run: |
+            sudo mv /usr/local/bin/swift* /usr/bin/
+            sudo mv /usr/local/lib/swift /usr/lib/
+
       - name: esp-idf build and merge binaries
         uses: espressif/esp-idf-ci-action@v1.1.0
         env:
