@@ -1,7 +1,7 @@
 
 // Define sprite types
 enum SpriteType {
-    case pumpkin
+    case coin
     case danger
 }
 
@@ -11,7 +11,7 @@ struct Sprite {
     var xSpeed: Float           // Speed in X direction
     var ySpeed: Float           // Speed in Y direction
     var isActive: Bool          // Whether the sprite is active (visible)
-    var type: SpriteType        // Type of the sprite (pumpkin or danger)
+    var type: SpriteType        // Type of the sprite (coin or danger)
 }
 
 
@@ -24,7 +24,7 @@ func app_main() {
     var attr = pthread_attr_t()
 
     pthread_attr_init(&attr)
-    pthread_attr_setstacksize(&attr, 32768) // Set the stack size for the thread
+    pthread_attr_setstacksize(&attr, 65536) // Set the stack size for the thread
 
     // Create the SDL thread
     let ret = pthread_create(&sdl_pthread, &attr, sdl_thread_entry_point, nil)
@@ -38,8 +38,11 @@ func app_main() {
 }
 
 func pointInRect(x: Float, y: Float, rect: SDL_FRect) -> Bool {
-    return x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h
+    let margin: Float = 30.0
+    return x >= rect.x - margin && x <= rect.x + rect.w + margin &&
+           y >= rect.y - margin && y <= rect.y + rect.h + margin
 }
+
 
 // Helper function to get random float (since Float.random(in:) may not be available)
 func getRandomFloat_C(_ min: Float, _ max: Float) -> Float {
@@ -51,11 +54,16 @@ func getRandomFloat(min: Float, max: Float) -> Float {
     return getRandomFloat_C(min, max)
 }
 
+var scoreTextBuffer = [CChar](repeating: 0, count: 30)
+var scoreDestRect = SDL_FRect(x: 10.0, y: 10.0, w: 120.0, h: 50.0)
+var score = 0
+
+
 func sdl_thread_entry_point(arg: UnsafeMutableRawPointer?) -> UnsafeMutableRawPointer? {
     print("SDL thread started.")
 
     // Initialize sprites
-    let numberOfPumpkins = 25
+    let numberOfCoins = 25
     let numberOfDangers = 10
     var sprites: [Sprite] = []
 
@@ -86,13 +94,19 @@ func sdl_thread_entry_point(arg: UnsafeMutableRawPointer?) -> UnsafeMutableRawPo
 
     SDL_InitFS();
 
+    TTF_Init()
+    let font = TTF_OpenFont(getFontFilePath(), 42);
+    if (font == nil) {
+        print("Font load failed")
+    }
+
     // let bmpFilePath: StaticString = "assets/espressif.bmp"
     let imageSurface = SDL_LoadBMP(getBmpFilePath())
     if (imageSurface == nil) {
         print("Failed to load image")
     }
 
-    let pumpkinTexture = SDL_CreateTextureFromSurface(renderer, imageSurface);
+    let coinTexture = SDL_CreateTextureFromSurface(renderer, imageSurface);
     SDL_DestroySurface(imageSurface);
 
     // let bmpFilePath: StaticString = "assets/espressif.bmp"
@@ -104,22 +118,22 @@ func sdl_thread_entry_point(arg: UnsafeMutableRawPointer?) -> UnsafeMutableRawPo
     let dangerTexture = SDL_CreateTextureFromSurface(renderer, dangerSurface);
     SDL_DestroySurface(dangerSurface);
 
-    var destRect = SDL_FRect()
+    var scoreRect = SDL_FRect()
 
     // Assign values to the fields
-    destRect.x = 10
-    destRect.y = 10
-    destRect.w = 32
-    destRect.h = 32
+    scoreRect.x = 10
+    scoreRect.y = 10
+    scoreRect.w = 32
+    scoreRect.h = 32
 
-    SDL_RenderTexture(renderer, pumpkinTexture, nil, &destRect);
+    SDL_RenderTexture(renderer, coinTexture, nil, &scoreRect);
     SDL_RenderPresent(renderer)
 
     var xSpeed: Float = 2.0
     var ySpeed: Float = 2.0
 
-    // Initialize pumpkins
-    for _ in 0..<numberOfPumpkins {
+    // Initialize coins
+    for _ in 0..<numberOfCoins {
         var destRect = SDL_FRect()
         destRect.w = 32.0
         destRect.h = 32.0
@@ -160,19 +174,23 @@ func sdl_thread_entry_point(arg: UnsafeMutableRawPointer?) -> UnsafeMutableRawPo
                 break
             } else if event.type == SDL_EVENT_FINGER_UP.rawValue {
                 // Get touch coordinates (normalized between 0 and 1)
-                let touchX = event.tfinger.x * screenWidth
-                let touchY = event.tfinger.y * screenHeight
+                let touchX = event.tfinger.x
+                let touchY = event.tfinger.y
 
                 // Check if touch intersects any sprite
                 for i in 0..<sprites.count {
                     if sprites[i].isActive && pointInRect(x: touchX, y: touchY, rect: sprites[i].destRect) {
-                        if sprites[i].type == .pumpkin {
-                            // Pumpkin was tapped
+                        if sprites[i].type == .coin {
+                            // Coin was tapped
                             sprites[i].isActive = false // Make it disappear
                             score += 1 // Increase score
                         } else if sprites[i].type == .danger {
                             // Danger was tapped
                             score = 0 // Reset score
+                            SDL_SetRenderDrawColor(renderer, 200, 200, 0, 255)
+                            SDL_RenderClear(renderer)
+                            SDL_RenderPresent(renderer)
+                            SDL_Delay(500)
                         }
 
                         // Reposition the sprite
@@ -212,13 +230,25 @@ func sdl_thread_entry_point(arg: UnsafeMutableRawPointer?) -> UnsafeMutableRawPo
         for sprite in sprites {
             if sprite.isActive {
                 var rect = sprite.destRect
-                if sprite.type == .pumpkin {
-                    SDL_RenderTexture(renderer, pumpkinTexture, nil, &rect)
+                if sprite.type == .coin {
+                    SDL_RenderTexture(renderer, coinTexture, nil, &rect)
                 } else if sprite.type == .danger {
                     SDL_RenderTexture(renderer, dangerTexture, nil, &rect)
                 }
             }
         }
+
+        // Update score
+        getScoreText(Int32(score), &scoreTextBuffer, 20)
+
+        // Render text to surface
+        let fontSurface = TTF_RenderText_Blended(font, &scoreTextBuffer, 0, SDL_Color(r: 40, g: 255, b: 40, a: 255))
+
+        // Create texture from surface
+        var scoreTexture = SDL_CreateTextureFromSurface(renderer, fontSurface)
+        SDL_RenderTexture(renderer, scoreTexture, nil, &scoreDestRect)
+        SDL_DestroySurface(fontSurface)
+
         // Present the updated frame
         SDL_RenderPresent(renderer)
 
