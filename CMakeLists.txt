@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.29)
+CMakeLists.txtcmake_minimum_required(VERSION 3.29)
 
 set(ENV{BUILD_BOARD} "esp32_p4_function_ev_board_noglib")
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
-project(main)
+project(esp32-sdl3-swift-example)
 
 
 get_filename_component(configName "${CMAKE_BINARY_DIR}" NAME)
