@@ -1,4 +1,4 @@
-CMakeLists.txtcmake_minimum_required(VERSION 3.29)
+cmake_minimum_required(VERSION 3.29)
 
 # Select board configuration based on -DBUILD_BOARD
 if(NOT DEFINED BUILD_BOARD)
