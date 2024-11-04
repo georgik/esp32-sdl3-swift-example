@@ -41,6 +41,7 @@ jobs:
             esp-box) echo 'esp32s3';;
             m5stack_core_s3) echo 'esp32s3';;
             esp32_p4_function_ev_board) echo 'esp32p4';;
+            esp32_c3_lcdkit) 'esp32c3';;
             *) echo 'Unknown target'; exit 1;;
           esac)" >> $GITHUB_ENV
 
