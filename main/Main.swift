@@ -24,7 +24,7 @@ func app_main() {
     var attr = pthread_attr_t()
 
     pthread_attr_init(&attr)
-    pthread_attr_setstacksize(&attr, 65536) // Set the stack size for the thread
+    pthread_attr_setstacksize(&attr, 32000) // Set the stack size for the thread
 
     // Create the SDL thread
     let ret = pthread_create(&sdl_pthread, &attr, sdl_thread_entry_point, nil)

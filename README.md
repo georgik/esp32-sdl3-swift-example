@@ -2,7 +2,7 @@
 
 ![Test Status](https://github.com/georgik/esp32-sdl3-swift-example/actions/workflows/test.yml/badge.svg)
 
-Example of graphical application for ESP32-P4.
+Example of graphical application for ESP32-C3, ESP32-P4.
 
 Read more about Swift for ESP32 at [Espressif Developer Portal](https://developer.espressif.com/tags/swift/).
 
@@ -14,8 +14,18 @@ Read more about Swift for ESP32 at [Espressif Developer Portal](https://develope
 
 ## Build
 
+ESP32-P4-Function-Ev-Board:
+
 ```shell
 idf.py @boards/esp32_p4_function_ev_board.cfg flash monitor
+```
+
+ESP32-C3-LcdKit:
+
+![ESP32-C3-LcdKit](docs/img/esp32-c3-lcdkit.webp)
+
+```shell
+idf.py @boards/e@boards/esp32_c3_lcdkit.cfg flash monitor
 ```
 
 ## Credits
