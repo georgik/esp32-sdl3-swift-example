@@ -76,6 +76,15 @@ func sdl_thread_entry_point(arg: UnsafeMutableRawPointer?) -> UnsafeMutableRawPo
         return nil
     }
 
+    var width: Int32 = 0
+    var height: Int32 = 0
+
+    // Get window size
+    SDL_GetWindowSize(window, &width, &height)
+
+    // Print the resolution
+    print("Display resolution: \(width)x\(height)")
+
     // Create SDL renderer
     guard let renderer = SDL_CreateRenderer(window, nil) else {
         print("Failed to create renderer")
