@@ -121,9 +121,6 @@ func sdl_thread_entry_point(arg: UnsafeMutableRawPointer?) -> UnsafeMutableRawPo
     SDL_RenderTexture(renderer, coinTexture, nil, &scoreRect);
     SDL_RenderPresent(renderer)
 
-    var xSpeed: Float = 2.0
-    var ySpeed: Float = 2.0
-
     // Initialize coins
     for _ in 0..<numberOfCoins {
         var destRect = SDL_FRect()
@@ -241,7 +238,7 @@ func sdl_thread_entry_point(arg: UnsafeMutableRawPointer?) -> UnsafeMutableRawPo
         let fontSurface = TTF_RenderText_Blended(font, &scoreTextBuffer, 0, SDL_Color(r: 40, g: 255, b: 40, a: 255))
 
         // Create texture from surface
-        var scoreTexture = SDL_CreateTextureFromSurface(renderer, fontSurface)
+        let scoreTexture = SDL_CreateTextureFromSurface(renderer, fontSurface)
         SDL_RenderTexture(renderer, scoreTexture, nil, &scoreDestRect)
         SDL_DestroySurface(fontSurface)
 

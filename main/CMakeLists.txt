@@ -1,7 +1,7 @@
 # Register the app as an IDF component
 idf_component_register(
     SRCS
-        "filesystem.c"
+        /dev/null
     PRIV_INCLUDE_DIRS "."
     LDFRAGMENTS "linker.lf"
 )
@@ -61,4 +61,5 @@ enable_language(Swift)
 target_sources(${COMPONENT_LIB}
     PRIVATE
     Main.swift
+    FileSystem.swift
 )
