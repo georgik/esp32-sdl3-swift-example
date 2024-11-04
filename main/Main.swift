@@ -24,7 +24,7 @@ func app_main() {
     var attr = pthread_attr_t()
 
     pthread_attr_init(&attr)
-    pthread_attr_setstacksize(&attr, 65536) // Set the stack size for the thread
+    pthread_attr_setstacksize(&attr, 32000) // Set the stack size for the thread
 
     // Create the SDL thread
     let ret = pthread_create(&sdl_pthread, &attr, sdl_thread_entry_point, nil)
@@ -75,6 +75,15 @@ func sdl_thread_entry_point(arg: UnsafeMutableRawPointer?) -> UnsafeMutableRawPo
     guard let window = SDL_CreateWindow(nil, Int32(BSP_LCD_H_RES), Int32(BSP_LCD_V_RES), 0) else {
         return nil
     }
+
+    var width: Int32 = 0
+    var height: Int32 = 0
+
+    // Get window size
+    SDL_GetWindowSize(window, &width, &height)
+
+    // Print the resolution
+    print("Display resolution: \(width)x\(height)")
 
     // Create SDL renderer
     guard let renderer = SDL_CreateRenderer(window, nil) else {
