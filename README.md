@@ -12,26 +12,61 @@ Read more about Swift for ESP32 at [Espressif Developer Portal](https://develope
 
 [Run the ESP32-P4 SDL3 Swift with Wokwi.com](https://wokwi.com/experimental/viewer?diagram=https%3A%2F%2Fraw.githubusercontent.com%2Fgeorgik%2Fesp32-sdl3-swift-example%2Fmain%2Fboards%2Fesp32_p4_function_ev_board%2Fdiagram.json&firmware=https%3A%2F%2Fgithub.com%2Fgeorgik%2Fesp32-sdl3-swift-example%2Freleases%2Fdownload%2Fv1.0.0%2Fesp32-sdl3-swift-example-esp32_p4_function_ev_board.bin)
 
+## Requirements
+
+- Swift 6.1 - https://www.swift.org/install
+- ESP-IDF 5.4 - https://github.com/espressif/esp-idf
+
 ## Build
 
-ESP32-P4-Function-Ev-Board:
+### Configure build environment
+
+```shell
+source esp-idf/export.sh
+export TOOLCHAINS=$(plutil -extract CFBundleIdentifier raw /Library/Developer/Toolchains/swift-DEVELOPMENT-SNAPSHOT-2024-10-30-a.xctoolchain/Info.plist)
+```
+
+### Build for ESP32-P4-Function-Ev-Board
 
 ```shell
 idf.py @boards/esp32_p4_function_ev_board.cfg flash monitor
 ```
 
-ESP32-C3-LcdKit:
+### Build for ESP32-C3-LcdKit
 
 ![ESP32-C3-LcdKit](docs/img/esp32-c3-lcdkit.webp)
 
 ```shell
-idf.py @boards/e@boards/esp32_c3_lcdkit.cfg flash monitor
+idf.py @boards/esp32_c3_lcdkit.cfg flash monitor
 ```
 
-ESP32-C6-DevKit
+### Build for ESP32-C6-DevKit
+
+![ESP32-C6-DevKit](docs/img/esp32-c6-devkit.webp)
+
+The configuration of this board is based on [ESP-BSP Generic](https://developer.espressif.com/blog/using-esp-bsp-with-devkits/) which allows configuration using menuconfig.
+
+SPI Display configuration:
+
+```ini
+CONFIG_BSP_DISPLAY_ENABLED=y
+CONFIG_BSP_DISPLAY_SCLK_GPIO=6
+CONFIG_BSP_DISPLAY_MOSI_GPIO=7
+CONFIG_BSP_DISPLAY_MISO_GPIO=-1
+CONFIG_BSP_DISPLAY_CS_GPIO=20
+CONFIG_BSP_DISPLAY_DC_GPIO=21
+CONFIG_BSP_DISPLAY_RST_GPIO=3
+CONFIG_BSP_DISPLAY_DRIVER_ILI9341=y
+```
+
+You can change the configuration by running:
 
 ```shell
-idf.py @boards/e@boards/esp32_c6_devkit.cfg flash monitor
+idf.py @boards/esp32_c6_devkit.cfg menuconfig
+```
+
+```shell
+idf.py @boards/esp32_c6_devkit.cfg flash monitor
 ```
 
 ## Credits
