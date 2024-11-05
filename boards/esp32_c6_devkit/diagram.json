@@ -13,9 +13,7 @@
         "type": "wokwi-ili9341",
         "id": "lcd1",
         "top": -546.22,
-        "left": -134.92,
-        "rotate": 90,
-        "attrs": { "flipVertical": "1" }
+        "left": -134.92
       }
     ],
     "connections": [
