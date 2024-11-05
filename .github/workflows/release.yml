@@ -6,11 +6,11 @@ on:
       release_name:
         description: 'Name of the GitHub Release'
         required: true
-        default: 'v1.1.0'
+        default: 'v1.1.1'
       release_tag:
         description: 'Tag for the GitHub Release'
         required: true
-        default: 'v1.1.0'
+        default: 'v1.1.1'
       prefix:
         description: 'Prefix for binary name'
         required: true
