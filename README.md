@@ -28,6 +28,12 @@ ESP32-C3-LcdKit:
 idf.py @boards/e@boards/esp32_c3_lcdkit.cfg flash monitor
 ```
 
+ESP32-C6-DevKit
+
+```shell
+idf.py @boards/e@boards/esp32_c6_devkit.cfg flash monitor
+```
+
 ## Credits
 
 - Graphical assets: https://opengameart.org/content/platformer-tiles
