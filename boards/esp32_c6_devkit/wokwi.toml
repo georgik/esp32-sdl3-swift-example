@@ -1,0 +1,7 @@
+# Wokwi Configuration File
+# Reference: https://docs.wokwi.com/vscode/project-config
+[wokwi]
+version = 1
+firmware = 'build.esp32_c6_devkit/flasher_args.json'
+elf = 'build.esp32_c6_devkit/esp32-sdl3-swift-example.elf'
+gdbServerPort=3333

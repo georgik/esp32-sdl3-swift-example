@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        board: [esp32_p4_function_ev_board, esp32_c3_lcdkit]
+        board: [esp32_p4_function_ev_board, esp32_c3_lcdkit, esp32_c6_devkit]
       fail-fast: false
 
     steps:
@@ -42,6 +42,7 @@ jobs:
             m5stack_core_s3) echo 'esp32s3';;
             esp32_p4_function_ev_board) echo 'esp32p4';;
             esp32_c3_lcdkit) echo 'esp32c3';;
+            esp32_c6_devkit) echo 'esp32c6';;
             *) echo 'Unknown target'; exit 1;;
           esac)" >> $GITHUB_ENV
 
