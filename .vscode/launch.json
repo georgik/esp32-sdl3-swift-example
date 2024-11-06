@@ -1,0 +1,35 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "esp32_c3_lcdkit - Wokwi GDB",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/build.esp32_c3_lcdkit/esp32-sdl3-swift-example.elf",
+        "cwd": "${workspaceFolder}",
+        "MIMode": "gdb",
+        "miDebuggerPath": "${command:espIdf.getToolchainGdb}",
+        "miDebuggerServerAddress": "localhost:3333"
+      },
+      {
+        "name": "esp32_c6_devkit - Wokwi GDB",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/build.esp32_c6_devkit/esp32-sdl3-swift-example.elf",
+        "cwd": "${workspaceFolder}",
+        "MIMode": "gdb",
+        "miDebuggerPath": "${command:espIdf.getToolchainGdb}",
+        "miDebuggerServerAddress": "localhost:3333"
+      },
+      {
+        "name": "esp32_p4_function_ev_board - Wokwi GDB",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/build.esp32_p4_function_ev_board/esp32-sdl3-swift-example.elf",
+        "cwd": "${workspaceFolder}",
+        "MIMode": "gdb",
+        "miDebuggerPath": "${command:espIdf.getToolchainGdb}",
+        "miDebuggerServerAddress": "localhost:3333"
+      },
+    ]
+  }

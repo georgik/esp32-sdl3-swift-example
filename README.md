@@ -69,6 +69,14 @@ idf.py @boards/esp32_c6_devkit.cfg menuconfig
 idf.py @boards/esp32_c6_devkit.cfg flash monitor
 ```
 
+### Run simulation in VS Code
+
+- Build the project, to get binaries for simulation.
+- Install [Wokwi for VS Code](https://docs.wokwi.com/vscode/getting-started/).
+- Open file `boards/esp32_.../diagram.json`.
+- Click Play button to start simulation.
+- Click Pause button to freeze simulation and display states of GPIOs.
+
 ## Credits
 
 - Graphical assets: https://opengameart.org/content/platformer-tiles

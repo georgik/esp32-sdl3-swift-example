@@ -1,33 +1,29 @@
 {
-    "version": 1,
-    "author": "Juraj Michálek",
-    "editor": "wokwi",
-    "parts": [
-      {
-        "type": "board-esp32-c6-devkitc-1",
-        "id": "esp",
-        "top": -494.32,
-        "left": -455.03
-      },
-      {
-        "type": "wokwi-ili9341",
-        "id": "lcd1",
-        "top": -546.22,
-        "left": -134.92
-      }
-    ],
-    "connections": [
-      [ "esp:TX", "$serialMonitor:RX", "", [] ],
-      [ "esp:RX", "$serialMonitor:TX", "", [] ],
-      [ "esp:3V3", "lcd1:VCC", "green", [] ],
-      [ "esp:GND.1", "lcd1:GND", "black", [] ],
-      [ "esp:6", "lcd1:SCK", "blue", [] ],
-      [ "esp:7", "lcd1:MOSI", "orange", [] ],
-      [ "esp:20", "lcd1:CS", "red", [] ],
-      [ "esp:21", "lcd1:D/C", "magenta", [] ],
-      [ "esp:3", "lcd1:RST", "yellow", [] ],
-      [ "lcd1:LED", "esp:3V3", "white", [] ]
-    ],
-    "serialMonitor": { "display": "terminal" },
-    "dependencies": {}
-  }
+  "version": 1,
+  "author": "Juraj Michálek",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "board-esp32-c6-devkitc-1",
+      "id": "esp",
+      "top": -494.32,
+      "left": -455.03,
+      "attrs": {}
+    },
+    { "type": "wokwi-ili9341", "id": "lcd1", "top": -546.22, "left": -134.92, "attrs": {} }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "esp:3V3", "lcd1:VCC", "green", [ "v221.21", "h362.93" ] ],
+    [ "esp:GND.1", "lcd1:GND", "black", [ "h-11.25", "v86.81", "h383.78" ] ],
+    [ "esp:6", "lcd1:SCK", "blue", [ "h-40.05", "v240.41", "h460.59" ] ],
+    [ "esp:7", "lcd1:MOSI", "orange", [ "h-30.45", "v221.21", "h441.39" ] ],
+    [ "esp:20", "lcd1:CS", "red", [ "h16.45", "v173.21", "h278.18" ] ],
+    [ "esp:21", "lcd1:D/C", "magenta", [ "h26.05", "v202.01", "h287.78" ] ],
+    [ "esp:3", "lcd1:RST", "yellow", [ "h-20.85", "v134.81", "h412.58" ] ],
+    [ "lcd1:LED", "esp:3V3", "white", [ "v86.22", "h-479.79", "v-288.41" ] ]
+  ],
+  "serialMonitor": { "display": "terminal" },
+  "dependencies": {}
+}
