@@ -1,9 +1,18 @@
 # Register the app as an IDF component
 idf_component_register(
     SRCS
-        /dev/null
+        "wrappers.c"
     PRIV_INCLUDE_DIRS "."
     LDFRAGMENTS "linker.lf"
+    REQUIRES
+        nvs_flash
+        esp_wifi
+        esp_http_client
+        json
+        espressif__esp_lcd_touch
+        esp_event
+        esp_netif
+        georgik__sdl
 )
 
 idf_build_get_property(target IDF_TARGET)
@@ -49,6 +58,14 @@ target_compile_options(${COMPONENT_LIB} PUBLIC "$<$<COMPILE_LANGUAGE:Swift>:SHEL
         ${SWIFT_INCLUDES}
         -import-bridging-header ${CMAKE_CURRENT_LIST_DIR}/BridgingHeader.h
     >")
+
+# Link the Swift standard library
+target_link_options(${COMPONENT_LIB} PRIVATE
+    "-Xlinker" "--start-group"
+    "-lswiftCore"
+    "-lswiftStdlibStubs"
+    "-Xlinker" "--end-group"
+)
 
 # Enable Swift support in CMake, force Whole Module builds (required by Embedded Swift), and use "CMAKE_Swift_COMPILER_WORKS" to
 # skip the trial compilations which don't (yet) correctly work when cross-compiling.
