@@ -8,7 +8,9 @@
       "id": "esp",
       "top": -494.32,
       "left": -455.03,
-      "attrs": {}
+      "attrs": {
+        "flashSize":"8"
+      }
     },
     { "type": "wokwi-ili9341", "id": "lcd1", "top": -546.22, "left": -134.92, "attrs": {} }
   ],
