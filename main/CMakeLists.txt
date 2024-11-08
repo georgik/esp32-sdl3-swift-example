@@ -15,6 +15,8 @@ idf_component_register(
         georgik__sdl
 )
 
+nvs_create_partition_image(nvs ../nvs.csv FLASH_IN_PROJECT)
+
 idf_build_get_property(target IDF_TARGET)
 idf_build_get_property(arch IDF_TARGET_ARCH)
 

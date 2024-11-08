@@ -50,6 +50,7 @@ func ESP_LOGE(_ tag: String, _ message: String) {
 }
 
 func ESP_LOGI(_ tag: String, _ message: String) {
+    print(message)
     // tag.withCString { tagPtr in
     //     message.withCString { msgPtr in
     //         // esp_log_write(ESP_LOG_INFO, tagPtr, "%s", msgPtr)
@@ -115,9 +116,6 @@ func sdl_thread_entry_point(arg: UnsafeMutableRawPointer?) -> UnsafeMutableRawPo
     ESP_LOGI(TAG, "ESP_WIFI_MODE_STA")
     wifi_init_sta()
 
-    SDL_InitFS()
-    initialize_sdl()
-
     // Synchronize time using SNTP
     time_sync()
 
@@ -128,6 +126,9 @@ func sdl_thread_entry_point(arg: UnsafeMutableRawPointer?) -> UnsafeMutableRawPo
     ESP_LOGI(TAG, "Shutdown WiFi")
     esp_wifi_stop()
     esp_wifi_deinit()
+
+    SDL_InitFS()
+    initialize_sdl()
 
     // Render weather data
     render_weather_data()
@@ -355,7 +356,7 @@ func fetch_weather_data() {
     response_len = 0
 
     var config = esp_http_client_config_t()
-    config.url = url.withUnsafeBufferPointer { $0.baseAddress }
+    config.url = open_weather_url
     config.method = HTTP_METHOD_GET
     config.timeout_ms = 5000
     config.event_handler = http_event_handler

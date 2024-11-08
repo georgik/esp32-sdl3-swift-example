@@ -1,0 +1,7 @@
+key,type,encoding,value
+storage,namespace,,
+ssid,data,string,"Wokwi-GUEST"
+password,data,string,""
+ow_api_key,data,string,"openweathermap.org_key"
+ow_city,data,string,"Brno"
+ow_country,data,string,"CZ"

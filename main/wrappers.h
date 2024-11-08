@@ -16,5 +16,5 @@ void sntp_setservername_wrapper(uint8_t idx, const char* server);
 void sntp_init_wrapper(void);
 
 wifi_init_config_t get_wifi_init_config_default(void);
-
+const char* open_weather_url;
 #endif
