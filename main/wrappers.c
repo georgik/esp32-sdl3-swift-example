@@ -23,5 +23,3 @@ wifi_init_config_t get_wifi_init_config_default() {
     wifi_init_config_t config = WIFI_INIT_CONFIG_DEFAULT();
     return config;
 }
-
-const char* open_weather_url = "http://api.openweathermap.org/data/2.5/weather?q=Brno,CZ&appid=.....&units=metric";

@@ -345,18 +345,20 @@ func fetch_weather_data() {
     let countryCode = String(cString: openweather_code)
     let apiKey = String(cString: openweather_api_key)
 
-    // Build the URL string using string interpolation
-    let urlString = "http://api.openweathermap.org/data/2.5/weather?q=\(cityName),\(countryCode)&appid=\(apiKey)&units=metric"
+    let urlStringLiteral = "http://api.openweathermap.org/data/2.5/weather?q=\(cityName),\(countryCode)&appid=\(apiKey)&units=metric"
 
-    // Convert the URL string to CChar array
-    var url = [CChar](urlString.utf8CString) // utf8CString includes null terminator
+    // Duplicate the URL string to get a C string
+    guard let urlCString = strdup(urlStringLiteral) else {
+        print("Error: strdup failed to allocate memory for the URL string.")
+        return
+    }
 
     // Initialize response buffer
     response_buffer = nil
     response_len = 0
 
     var config = esp_http_client_config_t()
-    config.url = open_weather_url
+    config.url = unsafeBitCast(urlCString, to: UnsafePointer<CChar>.self)
     config.method = HTTP_METHOD_GET
     config.timeout_ms = 5000
     config.event_handler = http_event_handler
