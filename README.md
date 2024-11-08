@@ -19,6 +19,14 @@ Read more about Swift for ESP32 at [Espressif Developer Portal](https://develope
 
 ## Build
 
+### Preparation
+
+Copy `nvs-template.csv` to `nvs.csv` and set proper values.
+
+```shell
+cp nvs-template.csv nvs.csv
+```
+
 ### Configure build environment
 
 ```shell
