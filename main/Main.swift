@@ -313,7 +313,7 @@ func time_sync() {
     sntp_set_sync_mode_wrapper(SNTP_SYNC_MODE_IMMED)
 
     // Set the SNTP server name
-    sntp_setservername_wrapper(0, "pool.ntp.org")
+    sntp_setservername_wrapper(0, strdup("pool.ntp.org"))
 
     // Initialize SNTP
     sntp_init_wrapper()
