@@ -595,42 +595,32 @@ func render_weather_data() {
     SDL_SetRenderDrawColor(renderer, 0, 0, 20, 255)
     SDL_RenderClear(renderer)
 
-    // var texts: [String] = []
-
     var texts = Array<String>()
 
     let description = String(cString: current_weather.description)
     texts.append(description)
 
-    // let temperature = String(cString: current_weather.temperature)
+    let temperature = String(Int(current_weather.temperature * 10) / 10) // Round to one decimal by converting to integer
+    let temperatureString = "Temperature: \(temperature)°C"
+    texts.append(temperatureString)
 
-    texts.append("abc")
+    let humidityString = "Humidity: \(current_weather.humidity)%"
+    texts.append(humidityString)
 
+    let pressureString = "Pressure: \(current_weather.pressure) hPa"
+    texts.append(pressureString)
 
-    // Temperature
-    var temperature = [CChar](repeating: 0, count: 32)
-    // sprintf(&temperature, "Temperature: %.1f°C", current_weather.temperature)
-    // texts.append(strdup("10.0"))
+    // Sunrise - Manually format hours and minutes with padding
+    let sunriseHour = current_weather.sunrise_hour < 10 ? "0\(current_weather.sunrise_hour)" : "\(current_weather.sunrise_hour)"
+    let sunriseMinute = current_weather.sunrise_minute < 10 ? "0\(current_weather.sunrise_minute)" : "\(current_weather.sunrise_minute)"
+    let sunriseString = "Sunrise: \(sunriseHour):\(sunriseMinute)"
+    texts.append(sunriseString)
 
-    // Humidity
-    var humidity = [CChar](repeating: 0, count: 32)
-    // sprintf(&humidity, "Humidity: %d%%", current_weather.humidity)
-    // texts.append(humidity)
-
-    // Pressure
-    var pressure = [CChar](repeating: 0, count: 32)
-    // sprintf(&pressure, "Pressure: %d hPa", current_weather.pressure)
-    // texts.append(pressure)
-
-    // Sunrise
-    var sunrise = [CChar](repeating: 0, count: 32)
-    // sprintf(&sunrise, "Sunrise: %02d:%02d", current_weather.sunrise_hour, current_weather.sunrise_minute)
-    // texts.append(sunrise)
-
-    // Sunset
-    var sunset = [CChar](repeating: 0, count: 32)
-    // sprintf(&sunset, "Sunset: %02d:%02d", current_weather.sunset_hour, current_weather.sunset_minute)
-    // texts.append(sunset)
+    // Sunset - Manually format hours and minutes with padding
+    let sunsetHour = current_weather.sunset_hour < 10 ? "0\(current_weather.sunset_hour)" : "\(current_weather.sunset_hour)"
+    let sunsetMinute = current_weather.sunset_minute < 10 ? "0\(current_weather.sunset_minute)" : "\(current_weather.sunset_minute)"
+    let sunsetString = "Sunset: \(sunsetHour):\(sunsetMinute)"
+    texts.append(sunsetString)
 
     var yPosition: Float = 10.0
 
@@ -639,6 +629,7 @@ func render_weather_data() {
         let color = SDL_Color(r: 255, g: 255, b: 255, a: 255)
         let surface = TTF_RenderText_Blended(font, text, 0, color)
         let texture = SDL_CreateTextureFromSurface(renderer, surface)
+        print(text)
 
         if let surface = surface {
             destRect.w = Float(surface.pointee.w)
