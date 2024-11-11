@@ -87,7 +87,7 @@ func app_main() {
     var attr = pthread_attr_t()
 
     pthread_attr_init(&attr)
-    pthread_attr_setstacksize(&attr, 32000) // Set the stack size for the thread
+    pthread_attr_setstacksize(&attr, 19000) // Set the stack size for the thread
 
     // Create the SDL thread
     let ret = pthread_create(&sdl_pthread, &attr, sdl_thread_entry_point, nil)
@@ -102,6 +102,16 @@ func app_main() {
 
 func sdl_thread_entry_point(arg: UnsafeMutableRawPointer?) -> UnsafeMutableRawPointer? {
     print("SDL thread started.")
+    mock_weather_data()
+    SDL_InitFS()
+    initialize_sdl()
+
+    // Render weather data
+    render_weather_data()
+
+    while true {
+        vTaskDelay(10000 / portTICK_PERIOD_MS)
+    }
 
     // Initialize NVS (Non-Volatile Storage)
     var ret = nvs_flash_init()
@@ -338,6 +348,37 @@ func time_sync() {
     }
 }
 
+func mock_weather_data() {
+    // Set description and icon to random weather conditions
+    let descriptions = ["Sunny", "Cloudy", "Rainy", "Stormy", "Snowy", "Windy", "Foggy"]
+    let icons = ["01d", "02d", "03d", "04d", "09d", "10d", "11d", "13d", "50d"]
+
+    let randomDescription = descriptions.randomElement() ?? "Clear"
+    let randomIcon = icons.randomElement() ?? "01d"
+
+    strncpy(&current_weather.description, randomDescription, current_weather.description.count)
+    strncpy(&current_weather.icon, randomIcon, current_weather.icon.count)
+
+    // Generate random temperature between -10 and 35 Celsius
+    current_weather.temperature = Double.random(in: -10.0...35.0)
+
+    // Generate random pressure value (in hPa) between 950 and 1050
+    current_weather.pressure = Int32.random(in: 950...1050)
+
+    // Generate random humidity percentage between 0 and 100
+    current_weather.humidity = Int32.random(in: 0...100)
+
+    // Set random times for sunrise and sunset (e.g., between 5:00 and 7:59 for sunrise)
+    current_weather.sunrise_hour = Int32.random(in: 5...7)
+    current_weather.sunrise_minute = Int32.random(in: 0...59)
+
+    // Set random times for sunset (e.g., between 18:00 and 20:59 for sunset)
+    current_weather.sunset_hour = Int32.random(in: 18...20)
+    current_weather.sunset_minute = Int32.random(in: 0...59)
+
+
+}
+
 
 func fetch_weather_data() {
     // Convert CChar arrays to Strings
@@ -508,7 +549,7 @@ func initialize_sdl() {
         return
     }
 
-    font = TTF_OpenFont("/assets/FreeSans.ttf", 24)
+    font = TTF_OpenFont("/assets/FreeSans.ttf", 12)
     if font == nil {
         // ESP_LOGE(TAG, "Failed to open font: \(String(cString: SDL_GetError()))")
         return
@@ -551,54 +592,65 @@ func padZero(_ value: Int32) -> String {
 
 func render_weather_data() {
     // Clear the renderer
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255)
+    SDL_SetRenderDrawColor(renderer, 0, 0, 20, 255)
     SDL_RenderClear(renderer)
 
-    var texts: [[CChar]] = []
+    // var texts: [String] = []
 
-    // Description
-    texts.append(current_weather.description)
+    var texts = Array<String>()
+
+    let description = String(cString: current_weather.description)
+    texts.append(description)
+
+    // let temperature = String(cString: current_weather.temperature)
+
+    texts.append("abc")
+
 
     // Temperature
     var temperature = [CChar](repeating: 0, count: 32)
     // sprintf(&temperature, "Temperature: %.1f°C", current_weather.temperature)
-    texts.append(temperature)
+    // texts.append(strdup("10.0"))
 
     // Humidity
     var humidity = [CChar](repeating: 0, count: 32)
     // sprintf(&humidity, "Humidity: %d%%", current_weather.humidity)
-    texts.append(humidity)
+    // texts.append(humidity)
 
     // Pressure
     var pressure = [CChar](repeating: 0, count: 32)
     // sprintf(&pressure, "Pressure: %d hPa", current_weather.pressure)
-    texts.append(pressure)
+    // texts.append(pressure)
 
     // Sunrise
     var sunrise = [CChar](repeating: 0, count: 32)
     // sprintf(&sunrise, "Sunrise: %02d:%02d", current_weather.sunrise_hour, current_weather.sunrise_minute)
-    texts.append(sunrise)
+    // texts.append(sunrise)
 
     // Sunset
     var sunset = [CChar](repeating: 0, count: 32)
     // sprintf(&sunset, "Sunset: %02d:%02d", current_weather.sunset_hour, current_weather.sunset_minute)
-    texts.append(sunset)
+    // texts.append(sunset)
 
     var yPosition: Float = 10.0
 
+    var destRect = SDL_FRect(x: 10.0, y: yPosition, w: 10.0, h: 10.0)
     for text in texts {
         let color = SDL_Color(r: 255, g: 255, b: 255, a: 255)
         let surface = TTF_RenderText_Blended(font, text, 0, color)
         let texture = SDL_CreateTextureFromSurface(renderer, surface)
 
-        // var destRect = SDL_FRect(x: 10.0, y: yPosition, w: Float(surface!.pointee.w), h: Float(surface!.pointee.h))
-        var destRect = SDL_FRect(x: 10.0, y: yPosition, w: 100.0, h: 100.0)
+        if let surface = surface {
+            destRect.w = Float(surface.pointee.w)
+            destRect.h = Float(surface.pointee.h)
 
-        SDL_RenderTexture(renderer, texture, nil, &destRect)
+            SDL_RenderTexture(renderer, texture, nil, &destRect)
+            SDL_DestroySurface(surface)
+
+            destRect.y += destRect.h + 5.0
+        }
         SDL_DestroyTexture(texture)
-        SDL_DestroySurface(surface)
 
-        yPosition += destRect.h + 5.0
     }
 
     // Present the updated frame

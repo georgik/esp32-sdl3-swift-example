@@ -8,7 +8,13 @@ else()
     set(ENV{BUILD_BOARD} ${BUILD_BOARD})
 endif()
 
+set(COMPONENTS
+    main
+    georgik__sdl
+) # "Trim" the build. Include the minimal set of components; main and anything it depends on.
+
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
+
 project(esp32-sdl3-swift-example)
 
 get_filename_component(configName "${CMAKE_BINARY_DIR}" NAME)
