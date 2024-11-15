@@ -1,7 +1,7 @@
 ## IDF Component Manager Manifest File
 dependencies:
   joltwallet/littlefs: "==1.14.8"
-  georgik/sdl: "^3.1.2~10"
+  georgik/sdl: "==3.1.2~10"
   georgik/sdl_ttf: "^3.0.0~3"
   idf:
     version: ">=5.1.0"
