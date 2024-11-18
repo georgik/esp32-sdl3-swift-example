@@ -69,6 +69,17 @@ idf.py @boards/esp32_c6_devkit.cfg menuconfig
 idf.py @boards/esp32_c6_devkit.cfg flash monitor
 ```
 
+### Build for Waveshare ESP32-C6-LCD-1.47
+
+![SP32-C6-LCD-1.47](docs/img/waveshare-esp32-c6-lcd-1.47.webp)
+
+- board: [ESP32-C6-LCD-1.47](https://www.waveshare.com/esp32-c6-lcd-1.47.htm)
+- display: 172x320
+
+```shell
+idf.py @boards/waveshare-esp32-c6-lcd-1.47.cfg flash monitor
+```
+
 ### Run simulation in VS Code
 
 - Build the project, to get binaries for simulation.
