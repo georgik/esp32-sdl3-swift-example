@@ -58,9 +58,8 @@ jobs:
           target: ${{ env.TARGET }}
           path: '.'
           command: |
-            wget https://download.swift.org/development/ubuntu2204/swift-DEVELOPMENT-SNAPSHOT-2024-10-30-a/swift-DEVELOPMENT-SNAPSHOT-2024-10-30-a-ubuntu22.04.tar.gz
-            tar xzf swift-DEVELOPMENT-SNAPSHOT-2024-10-30-a-ubuntu22.04.tar.gz
-            export PATH="$PATH:`pwd`/swift-DEVELOPMENT-SNAPSHOT-2024-10-30-a-ubuntu22.04/usr/bin/"
+            curl -L https://swiftlang.github.io/swiftly/swiftly-install.sh | bash
+            swiftly install main-snapshot
             swiftc --version
             idf.py @boards/${{ matrix.board }}.cfg build &&
             cd build.${{ matrix.board }} &&
