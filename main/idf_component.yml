@@ -1,22 +1,24 @@
 ## IDF Component Manager Manifest File
 dependencies:
   joltwallet/littlefs: "==1.14.8"
-  georgik/sdl: "==3.1.7~6"
-  georgik/sdl_ttf: "^3.0.0~3"
+  georgik/sdl:
+    version: "==3.2.5~2"
+    #path: "../../esp-idf-component-SDL/sdl"
+  georgik/sdl_ttf: "^3.1.2~3"
   idf:
     version: ">=5.5.0"
 
   espressif/esp32_p4_function_ev_board_noglib:
-    version: "3.0.1"
+    version: "5.0.0"
     rules:
     - if: "${BUILD_BOARD} == esp32_p4_function_ev_board_noglib"
 
   espressif/esp32_c3_lcdkit:
-    version: "^1.1.0~1"
+    version: "^2.0.0~1"
     rules:
     - if: "${BUILD_BOARD} == esp32_c3_lcdkit"
 
   espressif/esp_bsp_generic:
-    version: "==1.2.1"
+    version: "==3.0.0~1"
     rules:
     - if: "${BUILD_BOARD} == esp_bsp_generic"
