@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "author": "ESP32-SDL3-Swift Example",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "board-esp32-p4",
+      "id": "esp32p4",
+      "top": 0,
+      "left": 0,
+      "attrs": {
+        "psram": "16",
+        "flash": "16"
+      }
+    },
+    {
+      "type": "wokwi-ili9341",
+      "id": "lcd",
+      "top": 0,
+      "left": 300,
+      "attrs": {
+        "width": "720",
+        "height": "1280"
+      }
+    }
+  ],
+  "connections": [
+    ["esp32p4:GND", "lcd:GND", "black", []],
+    ["esp32p4:3V3", "lcd:VCC", "red", []]
+  ],
+  "dependencies": {}
+}

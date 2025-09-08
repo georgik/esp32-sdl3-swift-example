@@ -8,9 +8,15 @@ else()
     set(ENV{BUILD_BOARD} ${BUILD_BOARD})
 endif()
 
+# Add BSP-specific configurations
+if(BUILD_BOARD STREQUAL "m5stack_tab5")
+    add_compile_definitions(BSP_CONFIG_NO_GRAPHIC_LIB=1)
+endif()
+
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 project(esp32-sdl3-swift-example)
 
 get_filename_component(configName "${CMAKE_BINARY_DIR}" NAME)
 list(APPEND EXTRA_COMPONENT_DIRS "${CMAKE_SOURCE_DIR}/components/esp_littlefs")
+list(APPEND EXTRA_COMPONENT_DIRS "${CMAKE_SOURCE_DIR}/components")
 littlefs_create_partition_image(assets assets FLASH_IN_PROJECT)

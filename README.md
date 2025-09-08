@@ -2,7 +2,7 @@
 
 ![Test Status](https://github.com/georgik/esp32-sdl3-swift-example/actions/workflows/test.yml/badge.svg)
 
-Example of graphical application for ESP32-C3, ESP32-P4.
+Example of graphical application for ESP32-C3, ESP32-C6, ESP32-P4 using Swift programming language with SDL3 graphics library.
 
 Read more about Swift for ESP32 at [Espressif Developer Portal](https://developer.espressif.com/tags/swift/).
 
@@ -23,13 +23,48 @@ Read more about Swift for ESP32 at [Espressif Developer Portal](https://develope
 
 ```shell
 source esp-idf/export.sh
+```
+
+If you want to use specific Swift toolchain, you can set the environment variable `TOOLCHAINS`.
+The step is not required for Swift 6.1 and newer.
+```shell
 export TOOLCHAINS=$(plutil -extract CFBundleIdentifier raw /Library/Developer/Toolchains/swift-DEVELOPMENT-SNAPSHOT-2024-10-30-a.xctoolchain/Info.plist)
 ```
 
-### Build for ESP32-P4-Function-Ev-Board
+## Supported Boards
+
+This project supports multiple ESP32 development boards with different display configurations:
+
+| Board | MCU | Display | Resolution | Interface | Status |
+|-------|-----|---------|------------|-----------|--------|
+| ESP32-P4 Function Evaluation Board | ESP32-P4 | RGB LCD | 480x480 | RGB | ✅ Working |
+| M5Stack Tab5 | ESP32-P4 | MIPI-DSI LCD | 720x1280 | MIPI-DSI | ✅ Working |
+| ESP32-C3 LCD Kit | ESP32-C3 | SPI LCD | 240x240 | SPI | ✅ Working |
+| ESP32-C6 DevKit | ESP32-C6 | SPI LCD | 320x240 | SPI | ✅ Working |
+| Waveshare ESP32-C6-LCD-1.47 | ESP32-C6 | SPI LCD | 172x320 | SPI | ✅ Working |
+
+## Build Instructions
+
+### Build for ESP32-P4 Function Evaluation Board
 
 ```shell
 idf.py @boards/esp32_p4_function_ev_board.cfg flash monitor
+```
+
+### Build for M5Stack Tab5
+
+![M5Stack Tab5](docs/img/m5stack-tab5.webp)
+
+The M5Stack Tab5 is a premium ESP32-P4 tablet with a high-resolution 5-inch MIPI-DSI display (720x1280) and GT911 capacitive touch controller.
+
+- **Board**: [M5Stack Tab5](https://shop.m5stack.com/products/m5stack-tab5-esp32-p4-tablet)
+- **MCU**: ESP32-P4 RISC-V dual-core
+- **Display**: 5-inch IPS LCD, 720x1280 resolution
+- **Touch**: GT911 capacitive touch controller
+- **Interface**: MIPI-DSI for display
+
+```shell
+idf.py @boards/m5stack_tab5.cfg flash monitor
 ```
 
 ### Build for ESP32-C3-LcdKit

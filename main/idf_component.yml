@@ -22,3 +22,9 @@ dependencies:
     version: "==3.0.0~1"
     rules:
     - if: "${BUILD_BOARD} == esp_bsp_generic"
+
+  # Dependencies for M5Stack Tab5 BSP
+  espressif/esp_lcd_ili9881c: "^1.0.1"
+
+  # Local M5Stack Tab5 BSP component (until official BSP is published)
+  # Uses components/m5stack_tab5 local component

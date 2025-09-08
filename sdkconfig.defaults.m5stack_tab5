@@ -1,0 +1,32 @@
+# M5Stack Tab5 ESP32-P4 Configuration
+# - 5-inch 1280x720 IPS display via MIPI-DSI
+# - GT911 touch controller
+# - 16MB Flash, 32MB PSRAM
+# - ESP32-P4 dual-core RISC-V
+
+CONFIG_IDF_TARGET="esp32p4"
+CONFIG_ESPTOOLPY_FLASHMODE_QIO=y
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+
+# PSRAM Configuration
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_SPEED_200M=y
+
+# Compiler optimization for performance
+CONFIG_COMPILER_OPTIMIZATION_PERF=y
+
+# Cache configuration for P4
+CONFIG_CACHE_L2_CACHE_256KB=y
+CONFIG_CACHE_L2_CACHE_LINE_128B=y
+
+# FreeRTOS configuration
+CONFIG_FREERTOS_HZ=1000
+
+# BSP specific configuration for M5Stack Tab5
+# Display resolution 720x1280 via MIPI-DSI (portrait mode)
+# Configuration is handled by the M5Stack Tab5 BSP component
+CONFIG_COMPILER_CXX_EXCEPTIONS=y
+CONFIG_COMPILER_CXX_EXCEPTIONS_EMG_POOL_SIZE=0
+
+# Disable LVGL in M5Stack Tab5 BSP (we're using SDL3)
+# This is equivalent to BSP_CONFIG_NO_GRAPHIC_LIB=1
