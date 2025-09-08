@@ -1,0 +1,15 @@
+[wokwi]
+version = 1
+elf = "../../build.m5stack_tab5/esp32-sdl3-swift-example.elf"
+firmware = "../../build.m5stack_tab5/esp32-sdl3-swift-example.bin"
+
+[esp32]
+# M5Stack Tab5 ESP32-P4 configuration
+# - Dual-core RISC-V 
+# - 16MB Flash, 32MB PSRAM
+# - 1280x720 MIPI-DSI display
+# - GT911 touch controller
+
+[[esp32.chip]]
+model = "esp32p4"
+flash_size = "16MB"

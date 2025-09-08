@@ -173,9 +173,9 @@ func sdl_thread_entry_point(arg: UnsafeMutableRawPointer?) -> UnsafeMutableRawPo
                 running = false
                 break
             } else if event.type == SDL_EVENT_FINGER_UP.rawValue {
-                // Get touch coordinates (normalized between 0 and 1)
-                let touchX = event.tfinger.x
-                let touchY = event.tfinger.y
+                // Get touch coordinates (normalized between 0 and 1) and convert to screen coordinates
+                let touchX = event.tfinger.x * screenWidth
+                let touchY = event.tfinger.y * screenHeight
 
                 // Check if touch intersects any sprite
                 for i in 0..<sprites.count {
